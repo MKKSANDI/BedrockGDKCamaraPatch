@@ -1,0 +1,53 @@
+# Local builds and generated packages
+/camera_patch/out/
+/dist/
+/release/
+*.pdb
+*.ilk
+*.exp
+*.lib
+
+# Local investigation evidence and backups
+/_research/
+/diagnostics/
+/backups/
+/.freebuff/
+changes.json
+*.log
+
+# Historical local experiments are intentionally not distributed
+/fix.c
+/fix.dll
+/auto_fix.py
+/mouse_fix.py
+/gdk_superfix.dll
+/start_fix.vbs
+/install_persistent.bat
+/README_FIX.txt
+/DDD/
+/Agents.MD
+/docs/
+/main.py
+/gdk_input_probe.py
+/gdk_probe_analysis.py
+/tests/
+
+# Unrelated workspace projects
+/chikleaks/
+/kemono-coomer-api-docs/
+/kemono-coomer-api-workspace/
+
+# Python/editor noise
+__pycache__/
+*.pyc
+.vs/
+.vscode/
+.idea/
+
+# Local probe launchers and generated artifacts
+/RUN_HARMLESS_OVERLAY_PROBE.cmd
+/RUN_HARMLESS_OVERLAY_ROLLBACK.cmd
+/_stop_mcf_fix.ps1
+/update_gameinput_runtime.ps1
+/PresentMon.exe
+/camera_patch/src/loader.cpp

@@ -1,0 +1,3 @@
+LIBRARY vcruntime140_1_mcfix_original
+EXPORTS
+    __CxxFrameHandler4=mcfix_fake_frame_handler
