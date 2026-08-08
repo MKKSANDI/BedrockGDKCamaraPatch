@@ -6,10 +6,7 @@
 
 **MCFIX removes the stepped mouse-camera movement found in Minecraft for
 Windows (Bedrock, GDK).** It patches the installed game, so it works with the
-Minecraft Launcher, the Start menu, Flarial, and other launch methods.
-
-No Minecraft downgrade, custom launcher, injector, server, or port forwarding
-is required.
+Minecraft Launcher, the Start menu, and other launch methods.
 
 ## Install
 
@@ -171,8 +168,8 @@ signature must resolve exactly once before any hook is enabled.
   arbitrary game memory, camera objects, matrices, or vtables.
 - Hot-path camera state is fixed-capacity and thread-local, with no allocation
   or locking.
-- Flarial and historical MCFIX camera-hook DLLs are treated as conflicts to
-  avoid overlapping hooks.
+- Known overlapping camera-hook DLLs are treated as conflicts to avoid
+  activating two camera hooks at once.
 - The watchdog has no console window, network client, or polling loop.
 
 </details>
