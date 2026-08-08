@@ -104,28 +104,24 @@ void test_target_policy_accepts_matching_minecraft_x64_updates_but_not_other_pac
 
     auto opaque = valid_target();
     opaque.modules_enumerated = false;
-    expect(mcfix::evaluate_target(opaque).reason == mcfix::TargetReason::module_enumeration_failed,
-           "failure to inspect loaded modules must refuse the target");
+    expect(mcfix::evaluate_target(opaque).allowed,
+           "failure to inspect loaded modules must not block a compatible Minecraft target");
 }
 
-void test_target_policy_rejects_conflicting_hooks() {
-    struct Case {
-        std::wstring module;
-        mcfix::TargetReason reason;
-    };
-    const std::array cases{
-        Case{L"C:\\Users\\tester\\AppData\\Local\\Flarial\\Flarial.Client.Release.dll",
-             mcfix::TargetReason::flarial_loaded},
-        Case{L"C:\\Users\\tester\\Desktop\\MCFIX\\fix.dll", mcfix::TargetReason::obsolete_patch_loaded},
-        Case{L"C:\\temp\\cam_final.dll", mcfix::TargetReason::obsolete_patch_loaded},
-        Case{L"C:\\temp\\MCFIXCameraPatch.dll", mcfix::TargetReason::patch_already_loaded},
+void test_target_policy_accepts_every_loaded_third_party_module() {
+    const std::array modules{
+        L"C:\\Users\\tester\\AppData\\Local\\Flarial\\Flarial.Client.Release.dll",
+        L"C:\\Users\\tester\\Desktop\\MCFIX\\fix.dll",
+        L"C:\\temp\\cam_final.dll",
+        L"C:\\temp\\MCFIXCameraPatch.dll",
+        L"C:\\temp\\SomeOtherOverlay.dll",
     };
 
-    for (const auto& item : cases) {
+    for (const auto* module : modules) {
         auto facts = valid_target();
-        facts.loaded_modules.push_back(item.module);
-        expect(mcfix::evaluate_target(facts).reason == item.reason,
-               "every conflicting hook module must be refused by basename");
+        facts.loaded_modules.push_back(module);
+        expect(mcfix::evaluate_target(facts).allowed,
+               "loaded third-party modules must never block a compatible Minecraft target");
     }
 }
 
@@ -488,7 +484,7 @@ int main() {
     test_signature_scanner_reports_every_match();
     test_signature_parser_rejects_malformed_tokens();
     test_target_policy_accepts_matching_minecraft_x64_updates_but_not_other_packages();
-    test_target_policy_rejects_conflicting_hooks();
+    test_target_policy_accepts_every_loaded_third_party_module();
     test_telemetry_ring_drains_committed_events_in_order();
     test_telemetry_ring_reports_overwritten_events();
     test_hook_signatures_are_pinned_to_observed_1_26_42_cache();

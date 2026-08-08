@@ -17,10 +17,6 @@ enum class TargetReason {
     executable_mismatch,
     package_missing,
     package_mismatch,
-    module_enumeration_failed,
-    flarial_loaded,
-    obsolete_patch_loaded,
-    patch_already_loaded,
 };
 
 struct TargetFacts {

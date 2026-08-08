@@ -168,8 +168,6 @@ signature must resolve exactly once before any hook is enabled.
   arbitrary game memory, camera objects, matrices, or vtables.
 - Hot-path camera state is fixed-capacity and thread-local, with no allocation
   or locking.
-- Known overlapping camera-hook DLLs are treated as conflicts to avoid
-  activating two camera hooks at once.
 - The watchdog has no console window, network client, or polling loop.
 
 </details>

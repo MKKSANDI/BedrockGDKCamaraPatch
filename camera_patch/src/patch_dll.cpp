@@ -1,5 +1,4 @@
 #include <windows.h>
-#include <tlhelp32.h>
 #include <appmodel.h>
 
 #include <MinHook.h>
@@ -115,41 +114,6 @@ std::wstring current_package_name() {
     return package;
 }
 
-std::wstring lowercase_basename(std::wstring_view path) {
-    const auto slash = path.find_last_of(L"/\\");
-    std::wstring name(slash == std::wstring_view::npos ? path : path.substr(slash + 1));
-    for (auto& value : name) {
-        value = static_cast<wchar_t>(towlower(value));
-    }
-    return name;
-}
-
-bool has_conflicting_module() {
-    const HANDLE snapshot = CreateToolhelp32Snapshot(
-        TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, GetCurrentProcessId());
-    if (snapshot == INVALID_HANDLE_VALUE) {
-        return true;
-    }
-
-    MODULEENTRY32W entry{};
-    entry.dwSize = sizeof(entry);
-    bool conflict = false;
-    if (Module32FirstW(snapshot, &entry)) {
-        do {
-            const auto name = lowercase_basename(entry.szModule);
-            if (name == L"flarial.client.release.dll" || name == L"flarial.dll" ||
-                name == L"fix.dll" || name == L"cam_final.dll") {
-                conflict = true;
-                break;
-            }
-        } while (Module32NextW(snapshot, &entry));
-    } else {
-        conflict = true;
-    }
-    CloseHandle(snapshot);
-    return conflict;
-}
-
 std::span<const std::byte> executable_text_section() {
     const auto module = reinterpret_cast<const std::byte*>(GetModuleHandleW(nullptr));
     if (module == nullptr) {
@@ -207,11 +171,6 @@ DWORD WINAPI initialize_patch(void*) {
         mcfix::write_patch_status(false, "in-process package identity mismatch", nullptr, qpc_frequency);
         return 0;
     }
-    if (has_conflicting_module()) {
-        mcfix::write_patch_status(false, "conflicting hook module detected", nullptr, qpc_frequency);
-        return 0;
-    }
-
     const auto text = executable_text_section();
     if (text.empty()) {
         mcfix::write_patch_status(false, "valid x64 executable .text section not found", nullptr, qpc_frequency);
